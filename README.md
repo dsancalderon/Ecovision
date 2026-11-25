@@ -1,4 +1,4 @@
-# ♻️ Sistema de Visión Artificial para Identificación de Materiales Reciclables
+# Sistema de Visión Artificial para Identificación de Materiales Reciclables
 
 > **EcoVision Desktop 0.2.0:** abre `EcoVision Desarrollo.vbs` para trabajar con el proyecto local, o `dist/EcoVision/EcoVision.exe` para usar la distribución. El menú permite elegir Simulación o Prueba real. Guía de instalación offline, recarga, versiones y modelo provisional: [DESKTOP.md](DESKTOP.md).
 
@@ -8,7 +8,7 @@ Aplicación de escritorio que usa visión artificial (YOLO) para clasificar resi
 
 ---
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 En los puntos ecológicos institucionales, la contaminación cruzada de residuos ocurre principalmente por falta de orientación inmediata al usuario. Este sistema detecta el residuo mostrado frente a una cámara y responde con una clasificación binaria/especializada:
 
@@ -17,7 +17,7 @@ En los puntos ecológicos institucionales, la contaminación cruzada de residuos
 
 ---
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 Aplicación de escritorio nativa (**Python + PyWebView**) conectada por HDMI al televisor. Incluye un servidor Flask interno en `127.0.0.1`; no necesita un servidor externo ni internet para operar.
 
@@ -48,7 +48,7 @@ el clip suministrado; los otros seis materiales conservan ilustraciones estátic
 
 ---
 
-## 🧩 Módulos
+## Módulos
 
 ### Módulo 1 — Frontend (HTML5 / CSS3 / JS)
 - Ventana de escritorio a pantalla completa vía PyWebView.
@@ -70,7 +70,7 @@ El entrenamiento está incompleto. Lata, Tetra Pak, vidrio y no aprovechable pue
 
 ---
 
-## 📊 Dataset y Entrenamiento
+## Dataset y Entrenamiento
 
 ```
 Recolección de Campo ──► Etiquetado Roboflow ──► Data Augmentation ──► Entrenamiento Colab
@@ -86,7 +86,7 @@ Enteros/aplastados                                Desenfoque movimiento  Genera 
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 - **Backend:** Python, OpenCV, YOLO (Ultralytics), ONNX Runtime
 - **Frontend:** HTML5, CSS3, JavaScript
@@ -97,7 +97,7 @@ Enteros/aplastados                                Desenfoque movimiento  Genera 
 
 ---
 
-## 📁 Estructura de Carpetas Sugerida
+## Estructura de Carpetas Sugerida
 
 ```
 proyecto-reciclaje/
@@ -120,7 +120,7 @@ proyecto-reciclaje/
 
 ---
 
-## 💰 Presupuesto Consolidado
+## Presupuesto Consolidado
 
 | Componente | Especificación | Costo Estimado (COP) |
 |---|---|---|
@@ -141,7 +141,7 @@ proyecto-reciclaje/
 
 ---
 
-## 🚀 Puesta en Marcha
+## Puesta en Marcha
 
 ```bash
 # 1. Instalar dependencias

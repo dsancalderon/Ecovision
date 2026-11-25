@@ -1,179 +1,119 @@
-# Sistema de Visión Artificial para Identificación de Materiales Reciclables
+# EcoVision
 
-> **EcoVision Desktop 0.2.0:** abre `EcoVision Desarrollo.vbs` para trabajar con el proyecto local, o `dist/EcoVision/EcoVision.exe` para usar la distribución. El menú permite elegir Simulación o Prueba real. Guía de instalación offline, recarga, versiones y modelo provisional: [DESKTOP.md](DESKTOP.md).
+Prototipo de escritorio que identifica **botellas plásticas, latas de aluminio y cartón** con la cámara del computador y le indica al usuario en qué contenedor del punto ecológico depositarlos. Toda la inferencia corre en el propio equipo, sin internet.
 
-Proyecto de opción de grado — Ingeniería de Sistemas, Politécnico Grancolombiano.
+Proyecto de grado, Ingeniería de Sistemas, Institución Universitaria Politécnico Grancolombiano (2026). Autor: David Santiago Calderón Giraldo.
 
-Aplicación de escritorio que usa visión artificial (YOLO) para clasificar residuos como reciclables o no reciclables en tiempo real, desplegada en un televisor institucional mediante conexión HDMI.
+- Conjunto de datos (Roboflow Universe, versión 7): https://universe.roboflow.com/david-santiago-calderon-giraldo/ecovision-pcmsb
+- Este repositorio contiene el código de la aplicación, los pesos del detector (`model/best.pt`), los diagramas del documento y los scripts y registros de la evaluación.
 
----
+## Cómo funciona
 
-## Descripción del Proyecto
+1. **Captura.** Un hilo lee la cámara con OpenCV de forma continua y guarda el último fotograma.
+2. **Inferencia.** Otro hilo pasa ese fotograma por un detector YOLOv8n (entrada de 320 px, umbral de confianza 0,75) y guarda la clase, el recuadro y la confianza. Los dos hilos comparten un búfer protegido con un candado.
+3. **Decisión.** La interfaz solo muestra un resultado cuando la misma detección se sostiene durante 1,2 s (con tolerancia de 350 ms a pérdidas breves). Si hay más de un objeto sobre el umbral, pide retirar los demás. Si no reconoce nada, se queda en espera: nunca clasifica como "no aprovechable".
+4. **Presentación.** Un servidor Flask local (solo `127.0.0.1`) sirve el video como MJPEG y envía el estado por *Server-Sent Events* cada 150 ms a una interfaz HTML/CSS/JS mostrada en una ventana de PyWebView.
 
-En los puntos ecológicos institucionales, la contaminación cruzada de residuos ocurre principalmente por falta de orientación inmediata al usuario. Este sistema detecta el residuo mostrado frente a una cámara y responde con una clasificación binaria/especializada:
+Los diagramas UML (casos de uso, componentes, secuencia, estados, despliegue y actividades) están en `diagramas/` como PlantUML y PNG.
 
-- **Reciclable** → indica el tipo de material (ej. "Botella PET") y el porcentaje de confianza.
-- **No reciclable** → mensaje directo, orientando el desecho a la caneca de no aprovechables.
+## Modelo y datos
 
----
+| | |
+|---|---|
+| Modelo base | YOLOv8n preentrenado (3,1 M de parámetros), Ultralytics |
+| Clases | `botella_reciclable`, `carton`, `lata_aluminio` |
+| Fotografías originales | 867, tomadas para el proyecto |
+| Imágenes tras aumento | 2 081 (aumento ×3 solo en entrenamiento) |
+| Partición | 607 / 130 / 130 imágenes (entrenamiento / validación / prueba), asignación aleatoria |
+| Entrenamiento | Google Colab, GPU T4, 640 px, lote 16, 60 épocas (mejor: 59), semilla 0 |
+| Prueba (130 imágenes, 640 px) | mAP@0,50 = 0,954 · mAP@0,50:0,95 = 0,798 · precisión 0,977 · exhaustividad 0,954 |
+| Prueba a 320 px (como en la app) | mAP@0,50 = 0,952 · mAP@0,50:0,95 = 0,742 |
 
-## Arquitectura
+Los pesos finales están en `model/best.pt`. El cuaderno de entrenamiento y la carpeta `runs/detect/ecovision_3clases` (curvas, matriz de confusión, `results.csv`) se conservan fuera del repositorio.
 
-Aplicación de escritorio nativa (**Python + PyWebView**) conectada por HDMI al televisor. Incluye un servidor Flask interno en `127.0.0.1`; no necesita un servidor externo ni internet para operar.
+## Evaluación en el equipo de laboratorio
 
-### Máquina de 3 Estados (Frontend)
+Portátil Intel Core i3-1005G1 (2 núcleos), 3,8 GB de RAM, sin GPU, Windows 11, cámara integrada a 1280 × 720.
 
-```
-[ESTADO 1: INICIO] ──► [ESTADO 2: CARGA] ──► [ESTADO 3: RESULTADO]
-"Acerca tu residuo"     "Analizando..."       "Botella PET: Reciclable"
-(animación de espera)   (1.0s - 1.5s)          o "No es reciclable"
-                                                (retorna a Estado 1 tras 4-5s)
-```
+| Medida | Valor |
+|---|---|
+| Inferencias por segundo, modelo solo | 29,2 |
+| Inferencias por segundo, cámara + inferencia sin interfaz | 26,5 |
+| Inferencias por segundo, **aplicación completa abierta** | 14,0 (9,7 fotogramas nuevos/s; la cámara entrega 9,9 FPS) |
+| Prueba con objetos físicos (90 intentos, 30 por clase) | 62 correctos, 19 sin respuesta, 9 con clase equivocada |
+| Latencia de respuesta (62 aciertos, registro automático) | mediana 1,31 s · percentil 95 2,34 s · máximo 3,03 s |
+| Objetos fuera de alcance (50 intentos) | 43 en espera; kraft → cartón 5/10; vidrio → botella 2/10 |
 
-### Pipeline de Backend
+Los registros están en `verification/`: `medir_fps_resultado.json`, `medir_app_resultado.json`, `latencias_2026-11-25.csv` y `latencias_resumen.json`.
 
-```
-1. Captura USB (OpenCV, solicita 1280×720 @ 30 FPS)
-        ↓
-2. Hilo de captura y transmisión MJPEG (640×360)
-        ↓
-3. Hilo independiente de inferencia YOLO (imgsz=320)
-```
+## Requisitos
 
-Actualmente la inferencia es continua; el filtro de movimiento es una mejora
-pendiente. La tasa real de captura/inferencia depende del equipo y debe medirse.
-La interfaz reproduce videos locales en un único elemento de video. PET tiene
-el clip suministrado; los otros seis materiales conservan ilustraciones estáticas. Consulta
-`README_INTERFAZ.md` y `verification/PERFORMANCE_AUDIT.md` para límites y validación.
+- Windows 10/11, Python 3.11 o superior (probado con 3.14.0).
+- Cámara integrada o USB.
+- Dependencias: `pip install -r requirements.txt` (Ultralytics 8.4, OpenCV 5.0, Flask 3.1, PyWebView 6.2, PyTorch CPU). Para empaquetar, además `requirements-desktop.txt`.
+- Microsoft Edge WebView2 (ya viene en Windows 11; `scripts/download_webview2.py` descarga el instalador si falta).
 
----
-
-## Módulos
-
-### Módulo 1 — Frontend (HTML5 / CSS3 / JS)
-- Ventana de escritorio a pantalla completa vía PyWebView.
-- Puente JS API ↔ Python para comunicar estados.
-- Picture-in-picture opcional (240×180px) para mostrar el video en vivo, activable/desactivable en código.
-
-### Módulo 2 — Backend de Detección (Python + OpenCV + YOLO)
-- Captura de cámara web USB Full HD.
-- Frame differencing para detección de movimiento.
-- Modelo **YOLO Nano** (yolov8n / yolov11n) exportado a ONNX.
-
-**Clases del peso provisional actual (`model/best.pt`):**
-| # | Clase | Descripción |
-|---|-------|-------------|
-| 1 | `botella_reciclable` | Botella; se representa como PET en la interfaz |
-| 2 | `carton` | Cartón; se representa como Papel / Cartón en la interfaz |
-
-El entrenamiento está incompleto. Lata, Tetra Pak, vidrio y no aprovechable pueden explorarse en la simulación; su presencia en la interfaz no prueba que el modelo los reconozca.
-
----
-
-## Dataset y Entrenamiento
-
-```
-Recolección de Campo ──► Etiquetado Roboflow ──► Data Augmentation ──► Entrenamiento Colab
-250 fotos/clase          Bounding Boxes          Rotaciones ±15°       YOLO Nano
-Variación de luz          Exportación YOLO        Brillo ±20%           GPU T4 (Cloud)
-Enteros/aplastados                                Desenfoque movimiento  Genera best.pt
-```
-
-- **Volumen objetivo:** 200–300 fotos por clase, tomadas en cafeterías, pasillos y puntos ecológicos del campus, en distintas condiciones de luz.
-- **Variabilidad:** objetos aplastados, sin tapa, con etiqueta rota, en distintos ángulos.
-- **Anotación:** Roboflow (bounding boxes + augmentation).
-- **Registro de métricas:** cada detección exitosa se guarda en `estadisticas_reciclaje.csv` (fecha, hora, clase, % de confianza) para el informe final.
-
----
-
-## Stack Tecnológico
-
-- **Backend:** Python, OpenCV, YOLO (Ultralytics), ONNX Runtime
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Empaquetado desktop:** PyWebView
-- **Entrenamiento:** Google Colab (GPU T4)
-- **Etiquetado:** Roboflow
-- **Hardware:** Cámara web USB 1080p, TV institucional (HDMI)
-
----
-
-## Estructura de Carpetas Sugerida
-
-```
-proyecto-reciclaje/
-├── backend/
-│   ├── main.py                  # Entry point (PyWebView + loop de captura)
-│   ├── camera.py                 # Captura OpenCV + frame differencing
-│   ├── inference.py               # Carga y ejecución del modelo ONNX
-│   └── logger.py                  # Registro en estadisticas_reciclaje.csv
-├── frontend/
-│   ├── index.html                 # Máquina de 3 estados
-│   ├── style.css
-│   └── app.js                     # Puente JS API
-├── model/
-│   └── best.onnx                  # Modelo exportado
-├── dataset/                       # (no versionar imágenes pesadas, usar .gitignore)
-├── estadisticas_reciclaje.csv
-├── requirements.txt
-└── README.md
-```
-
----
-
-## Presupuesto Consolidado
-
-| Componente | Especificación | Costo Estimado (COP) |
-|---|---|---|
-| Unidad de Cómputo | Portátil de desarrollo (sin suspensión) | $0 |
-| Sensor de Visión | Cámara Web USB Full HD 1080p (UVC) | ~$55.000 |
-| Dispositivo de Salida | TV institucional (HDMI) | $0 |
-| Cableado | Cable HDMI + extensión USB activa 2m | ~$25.000 |
-| **Total** | | **~$80.000 COP** |
-
----
-
-## 🗓️ Roadmap de Ejecución
-
-- [ ] **Semana 1:** Montaje base en VS Code (PyWebView + OpenCV + interfaz de 3 pantallas).
-- [ ] **Semana 2:** Sesión de recolección de fotos en campus + etiquetado en Roboflow.
-- [ ] **Semana 3:** Entrenamiento YOLO Nano en Colab (GPU T4) + exportación a ONNX.
-- [ ] **Semana 4:** Pruebas integradas en el punto ecológico + redacción del informe de métricas.
-
----
-
-## Puesta en Marcha
+## Ejecutar
 
 ```bash
-# 1. Instalar dependencias
-pip install -r requirements.txt
-
-# 2. Ejecutar la Aplicación de Escritorio (Ventana Nativa PyWebView)
 python realtime_ui_app.py
-
-# 3. Modo Kiosco / Pantalla Completa (Ideal para TV institucional por HDMI)
-python realtime_ui_app.py --fullscreen
-
-# Elegir cámara o probar únicamente la interfaz de escritorio
-python realtime_ui_app.py --cam1       # índice OpenCV 0
-python realtime_ui_app.py --cam2       # índice OpenCV 1
-python realtime_ui_app.py --sin-camara # simulador, sin cámara ni modelo
-
-# 4. Modo alternativo (solo ventana OpenCV tradicional)
-python realtime_cam.py
 ```
 
-`requirements.txt`:
+Abre la ventana con el menú para elegir **Prueba real** (cámara y modelo) o **Simulación** (solo interfaz, sin cámara). Opciones útiles:
+
+| Opción | Efecto |
+|---|---|
+| `--cam N` / `--cam1` / `--cam2` | Entra directo en modo real con la cámara de índice N (0 o 1) |
+| `--sin-camara` | Entra directo en simulación |
+| `--conf 0.75` | Umbral de confianza (0,10 a 0,95) |
+| `--model ruta.pt` | Usa otros pesos |
+| `--fullscreen` | Ventana a pantalla completa |
+| `--serve` / `--browser` | Solo el servidor local, o abrirlo en el navegador |
+| `--dev` | Recarga automática de interfaz y código durante el desarrollo |
+
+`realtime_cam.py` es una vista mínima en una ventana de OpenCV, sin interfaz, útil para depurar el modelo.
+
+## Medir
+
+Con la aplicación abierta en modo real:
+
+```bash
+python verification/medir_app.py --seg 60
 ```
-ultralytics>=8.0.0
-opencv-python>=4.8.0
-numpy>=1.24.0
-onnxruntime>=1.16.0
-pywebview>=4.0.0
-Flask>=3.0.0
+
+Lee los contadores internos de la app (`/api/perf`) durante 60 s y reporta tasa de inferencia, fotogramas nuevos analizados y FPS de captura con la interfaz en ejecución.
+
+La app registra sola la latencia de cada resultado mostrado en `outputs/latencias.csv` (desde la primera detección sobre el umbral hasta la tarjeta de resultado). Para resumirla por clase:
+
+```bash
+python verification/medir_app.py --latencias
 ```
 
----
+`verification/medir_fps.py` mide el techo del modelo sin interfaz (inferencia aislada y cámara + inferencia).
 
-## 📄 Licencia
+## Empaquetar
 
-Proyecto académico — Politécnico Grancolombiano.
+`scripts/build_desktop.ps1` genera `dist/EcoVision/EcoVision.exe` con PyInstaller (ver `DESKTOP.md`). Las carpetas `build/`, `dist/` y `packaging/dependencies/` no se versionan.
+
+## Estructura
+
+```
+realtime_ui_app.py      aplicación: captura, inferencia, servidor Flask y ventana
+desktop_runtime.py      sesión de escritorio, rutas locales y ajustes
+realtime_cam.py         vista OpenCV sin interfaz
+templates/, static/     interfaz web (HTML, CSS, JS, recursos)
+model/                  best.pt (3 clases) y yolov8n.pt (base)
+diagramas/              figuras UML del documento (.puml y .png)
+verification/           scripts de medición, registros de evaluación y pruebas de interfaz
+scripts/                empaquetado y utilidades
+```
+
+## Límites conocidos
+
+- Tres clases. Tetra Pak, vidrio y residuos no aprovechables no se reconocen; ante ellos la app se queda en espera o, si se parecen a una clase (kraft, vidrio), puede equivocarse.
+- El reparto de las particiones fue aleatorio por imagen; fotos de un mismo objeto pudieron quedar en entrenamiento y prueba.
+- Todo se evaluó en un laboratorio, con un equipo y una cámara. No hubo pruebas con usuarios.
+
+## Licencia
+
+Proyecto académico. Las fuentes e iconos de `static/vendor/` conservan sus licencias originales (OFL y MIT).

@@ -11,3 +11,9 @@ capturas_video/
 *.docx
 ~$*
 *.tmp
+# notas de trabajo y textos de la tesis: no se publican
+Textos corregidos*
+Auditor*.md
+Revisi*.md
+HANDOFF.md
+PROMPTS_VIDEOS_GEMINI.md

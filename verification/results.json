@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-17T04:18:43.832Z",
+  "environment": "Headless Edge, Flask without physical camera",
+  "passed": [
+    "idle: no video download, canvas or graphics engine; one video element",
+    "PET simulator: actual MP4 decodes and advances, muted, looping, no controls",
+    "all existing PET aliases select supplied clip",
+    "six materials without supplied videos keep their individual SVG and no decoder source",
+    "idle releases source and decoder",
+    "blur/hidden document pause playback; focus/visibility resume",
+    "reduced motion uses the video poster without loading the MP4",
+    "rapid class changes and page lifecycle release/restore playback",
+    "responsive result at 650px and 390px without horizontal overflow",
+    "continuous detection path, 4.2s automatic reset and object withdrawal cancellation",
+    "playback loops at end of the full 10-second file",
+    "SSE fallback polling stays singleton and stops on reconnect",
+    "missing video: poster fallback and normal countdown",
+    "autoplay denied: poster fallback and normal countdown",
+    "slow video load cannot block countdown or reopen a completed result"
+  ],
+  "video": {
+    "width": 720,
+    "height": 1280,
+    "duration": 10.005,
+    "muted": true,
+    "controls": false,
+    "loop": true,
+    "rate": 1
+  },
+  "errors": []
+}

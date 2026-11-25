@@ -1,0 +1,12 @@
+{
+  "cameras": [
+    {
+      "index": 0,
+      "name": "HD User Facing"
+    },
+    {
+      "index": 1,
+      "name": "OBS Virtual Camera"
+    }
+  ]
+}

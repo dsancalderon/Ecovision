@@ -1,0 +1,36 @@
+@startuml fig1_componentes
+!include estilo.iuml
+skinparam componentStyle uml2
+
+node "Cámara" <<device>> as Cam
+
+package "Proceso EcoVision (Python)" {
+  component "Gestor de sesión\n<<DesktopSession>>" as Ses
+  package "VisionCameraManager" as VCM {
+    component "Hilo de captura\n<<OpenCV>>" as Cap
+    component "Búfer compartido\n(último fotograma\ny detección activa)" as Buf
+    component "Hilo de inferencia\n<<Ultralytics YOLO>>" as Inf
+  }
+  component "Servidor local\n<<Flask, 127.0.0.1>>" as Fl
+}
+
+artifact "best.pt\n(pesos del modelo)" as Pesos
+folder "static/\n(recursos visuales)" as Rec
+
+package "Ventana PyWebView (WebView2)" {
+  component "Interfaz web\n<<HTML, CSS, JavaScript>>" as UI
+}
+
+Cam --> Cap : fotogramas
+Cap --> Buf : escribe fotograma
+Buf --> Inf : copia del fotograma
+Inf --> Buf : clase, caja y confianza
+Pesos ..> Inf : <<carga>>
+Ses ..> VCM : <<inicia/detiene>>
+Buf --> Fl : estado y video
+Fl --> UI : /video_feed (MJPEG)
+Fl --> UI : /api/stream (SSE)
+UI --> Fl : /api/mode (selección de modo)
+Rec ..> UI : <<usa>>
+
+@enduml

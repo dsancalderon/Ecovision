@@ -1,0 +1,21 @@
+@startuml fig4_actividades_entrenamiento
+!include estilo.iuml
+
+start
+:Tomar fotografías propias de las tres categorías\n(botella plástica, lata de aluminio, cartón);
+repeat
+  :Anotar recuadros delimitadores
+(Roboflow);
+  :Dividir las imágenes originales
+(70 % entrenamiento, 15 % validación, 15 % prueba);
+  :Aplicar aumento de datos\n(solo al conjunto de entrenamiento);
+  :Entrenar el detector YOLO\n(Google Colab);
+  :Evaluar con el conjunto de validación;
+backward :Ampliar el conjunto de datos\no ajustar parámetros;
+repeat while (¿Desempeño aceptable\nen validación?) is (no) not (sí)
+:Evaluar con el conjunto de prueba reservado\n(precisión, exhaustividad, mAP; RNF-02);
+:Exportar pesos (best.pt / best.onnx);
+:Instalar los pesos en la carpeta model/\ndel prototipo;
+stop
+
+@enduml

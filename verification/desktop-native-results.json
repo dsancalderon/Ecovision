@@ -1,0 +1,26 @@
+{
+  "passed": [
+    "Start window centered, no scroll, maximize disabled and F11 blocked",
+    "Native start window fits form; centered logo and grouped real camera selector",
+    "Native WebView2 menu loaded",
+    "Classification runs in native fullscreen",
+    "PET video decodes and advances in native WebView2 result card",
+    "Cardboard video plays in native WebView2 result card",
+    "Return to native menu without camera or model; zero external UI resources"
+  ],
+  "errors": [],
+  "home_window": {
+    "width": 614,
+    "height": 444
+  },
+  "native_placement": {
+    "left": 499,
+    "top": 206,
+    "width": 921,
+    "height": 667,
+    "screen_left": 0,
+    "screen_top": 0,
+    "screen_width": 1920,
+    "screen_height": 1080
+  }
+}

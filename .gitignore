@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+build/
+dist/
+packaging/dependencies/
+*.log
+# archivos de trabajo que no van al repositorio
+outputs/
+capturas_video/
+*.docx
+~$*
+*.tmp

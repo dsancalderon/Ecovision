@@ -1,0 +1,77 @@
+' Estilo común para las figuras del documento (sobrio, apto para APA 7)
+!pragma layout smetana
+skinparam dpi 200
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam ArrowColor #222222
+skinparam ArrowFontSize 11
+skinparam ArrowThickness 1
+skinparam roundCorner 6
+skinparam NoteBackgroundColor #FAFAFA
+skinparam NoteBorderColor #888888
+skinparam NoteFontSize 10
+
+skinparam component {
+  BackgroundColor #F2F2F2
+  BorderColor #222222
+}
+skinparam node {
+  BackgroundColor #FFFFFF
+  BorderColor #222222
+}
+skinparam artifact {
+  BackgroundColor #F2F2F2
+  BorderColor #222222
+}
+skinparam database {
+  BackgroundColor #F2F2F2
+  BorderColor #222222
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #222222
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #222222
+}
+skinparam interface {
+  BackgroundColor #FFFFFF
+  BorderColor #222222
+}
+skinparam state {
+  BackgroundColor #F2F2F2
+  BorderColor #222222
+  StartColor #222222
+  EndColor #222222
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #222222
+}
+skinparam usecase {
+  BackgroundColor #F2F2F2
+  BorderColor #222222
+}
+skinparam activity {
+  BackgroundColor #F2F2F2
+  BorderColor #222222
+  DiamondBackgroundColor #FFFFFF
+  DiamondBorderColor #222222
+}
+skinparam partition {
+  BorderColor #222222
+}
+skinparam sequence {
+  ParticipantBackgroundColor #F2F2F2
+  ParticipantBorderColor #222222
+  ActorBackgroundColor #FFFFFF
+  ActorBorderColor #222222
+  LifeLineBorderColor #777777
+  LifeLineBackgroundColor #E6E6E6
+  GroupBorderColor #555555
+  GroupBackgroundColor #FFFFFF
+  DividerBackgroundColor #F2F2F2
+}

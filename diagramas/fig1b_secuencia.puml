@@ -1,0 +1,46 @@
+@startuml fig1b_secuencia
+!include estilo.iuml
+autonumber
+hide footbox
+
+actor "Usuario" as U
+participant "Cámara" as Cam
+participant "Hilo de\ncaptura" as Cap
+participant "Hilo de\ninferencia" as Inf
+participant "Servidor\nFlask" as Fl
+participant "Interfaz\n(PyWebView)" as UI
+
+par Captura continua
+  loop mientras la sesión esté activa
+    Cap -> Cam : read()
+    Cam --> Cap : fotograma
+    Cap -> Cap : actualizar búfer
+  end
+else Inferencia continua
+  loop mientras la sesión esté activa
+    Inf -> Inf : copiar último fotograma
+    Inf -> Inf : predict(imgsz = 320)
+    note right : latencia de inferencia
+    Inf -> Inf : guardar detección de mayor confianza
+  end
+else Publicación de estado
+  loop cada 150 ms
+    Fl -> UI : evento SSE (detección, FPS, estado de cámara)
+  end
+end
+
+== Ciclo de reconocimiento ==
+
+{ini_resp} U -> Cam : presenta el residuo
+Fl -> UI : detección [confianza ≥ 0.75]
+UI -> UI : pasar a Análisis
+loop durante 1.2 s
+  Fl -> UI : detección vigente
+  UI -> UI : confirmar presencia
+end
+{fin_resp} UI -> U : muestra categoría y orientación
+UI -> UI : volver a Espera tras 4.2 s
+
+{ini_resp} <-> {fin_resp} : latencia de\nrespuesta
+
+@enduml

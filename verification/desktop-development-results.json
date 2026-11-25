@@ -1,0 +1,9 @@
+{
+  "passed": [
+    "Python edit triggers a fresh native backend and returns to menu",
+    "Restoring the source triggers a second clean restart"
+  ],
+  "previous": "http://127.0.0.1:62003",
+  "changed": "http://127.0.0.1:62011",
+  "restored": "http://127.0.0.1:64009"
+}

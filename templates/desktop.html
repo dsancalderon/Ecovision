@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EcoVision · Inicio</title>
+    <link rel="icon" href="/static/images/icon_ecovision.ico">
+    <link rel="stylesheet" href="/static/vendor/fonts.css">
+    <link rel="stylesheet" href="/static/css/desktop.css">
+</head>
+<body class="desktop-home" data-ui-revision="{{ ui_revision }}">
+    <main class="home-shell">
+        <section id="startup-panel" class="loading-panel" aria-live="polite">
+            <img src="/static/images/icon_ecovision.png" alt="" class="loading-logo">
+            <p class="eyebrow">ECOVISION · INICIANDO</p>
+            <h1 id="loading-title">Preparando una mejor decisión.</h1>
+            <p id="loading-message">Verificando los recursos de la aplicación…</p>
+            <progress id="startup-progress" max="100" value="15" aria-label="Progreso de inicio"></progress>
+            <p id="loading-error" class="error-copy" hidden></p>
+            <button id="back-from-error" class="text-button" hidden>Volver a elegir modo</button>
+        </section>
+        <section id="menu-panel" hidden>
+            <img class="home-brand" src="/static/images/logo_ecovision.png" alt="EcoVision">
+            <div class="menu-intro">
+                <h1>¿Cómo quieres iniciar?</h1>
+                <p>Explora la experiencia o identifica materiales con tu cámara</p>
+            </div>
+            <div class="mode-grid">
+                <button class="mode-card" id="choose-simulation">
+                    Simulación
+                </button>
+                <div class="real-mode-row" role="group" aria-label="Prueba real y cámara">
+                    <button class="mode-card real-card" id="choose-real" disabled>Prueba Real</button>
+                    <select id="camera-choice" aria-label="Cámaras disponibles" disabled><option value="">Buscando cámaras…</option></select>
+                </div>
+            </div>
+        </section>
+        <footer class="home-footer">EcoVision v{{ app_version }}</footer>
+    </main>
+    <script src="/static/js/desktop.js"></script>
+</body>
+</html>

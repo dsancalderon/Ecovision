@@ -1,0 +1,31 @@
+{
+  "camera_index": 0,
+  "development": false,
+  "error": null,
+  "message": "Elige cómo quieres probar EcoVision.",
+  "mode": "menu",
+  "model_classes": [],
+  "model_provisional": true,
+  "native_layout": {
+    "centered": true,
+    "fullscreen": false,
+    "height": 444,
+    "placement": {
+      "height": 667,
+      "left": 499,
+      "screen_height": 1080,
+      "screen_left": 0,
+      "screen_top": 0,
+      "screen_width": 1920,
+      "top": 206,
+      "width": 921
+    },
+    "view": "home",
+    "width": 614
+  },
+  "native_ready": true,
+  "phase": "ready",
+  "progress": 100,
+  "ui_revision": "0.2.0",
+  "version": "0.2.0"
+}

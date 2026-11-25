@@ -1,0 +1,15 @@
+{
+  "fecha": "2026-11-25 02:14",
+  "condicion": "aplicacion completa en ejecucion (PyWebView + Flask + MJPEG + SSE)",
+  "duracion_s": 60.0,
+  "fps_captura": 9.9,
+  "inferencias": 840,
+  "inferencias_por_s": 14.0,
+  "fotogramas_nuevos_analizados_por_s": 9.7,
+  "ms_inferencia_sesion": {
+    "media": 98.3,
+    "mediana": 62.3,
+    "n": 1572,
+    "p95": 199.3
+  }
+}

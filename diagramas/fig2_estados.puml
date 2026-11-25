@@ -1,0 +1,35 @@
+@startuml fig2_estados
+!include estilo.iuml
+hide empty description
+
+[*] --> Preparacion
+
+state "Preparación" as Preparacion
+Preparacion : entry / cargar pesos y abrir cámara
+
+state "Error de cámara" as Error
+Error : entry / mostrar aviso (RF-08)
+
+state "Operación en modo real" as Op {
+  [*] --> Espera
+  state "Espera" as Espera
+  Espera : do / capturar e inferir (RF-01, RF-02)
+  state "Análisis" as Analisis
+  Analisis : do / verificar presencia continua
+  state "Resultado" as Resultado
+  Resultado : entry / mostrar categoría y orientación (RF-05)
+
+  Espera --> Espera : sin detección o\n[confianza < 0.75] (RF-06)
+  Espera --> Analisis : detección\n[confianza ≥ 0.75] (RF-04)
+  Analisis --> Espera : objeto ausente > 350 ms
+  Analisis --> Resultado : presencia verificada\n(1.2 s)
+  Resultado --> Espera : after(4.2 s) (RF-07)
+}
+
+Preparacion --> Op : modelo y cámara listos
+Preparacion --> Error : fallo al cargar\nmodelo o cámara
+Op --> Error : sin fotogramas > 2 s
+Error --> [*] : volver al menú
+Op --> [*] : finalizar sesión
+
+@enduml

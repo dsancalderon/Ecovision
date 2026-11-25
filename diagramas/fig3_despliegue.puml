@@ -1,0 +1,29 @@
+@startuml fig3_despliegue
+!include estilo.iuml
+
+node "Cámara web\n(integrada o USB)" <<device>> as Cam
+
+node "Computador de laboratorio" <<device>> as PC {
+  node "Windows" <<os>> as OS {
+    node "Proceso EcoVision (Python 3)" <<executionEnvironment>> as Py {
+      component "Captura e inferencia\n<<OpenCV, YOLO>>" as Vis
+      component "Servidor local\n<<Flask>>" as Fl
+    }
+    node "Microsoft Edge WebView2 (ventana PyWebView)" <<executionEnvironment>> as WV {
+      component "Interfaz web\n<<HTML, CSS, JS>>" as UI
+    }
+    folder "Archivos locales" as FS {
+      artifact "best.pt" as Pesos
+      artifact "templates/ y static/" as Rec
+    }
+  }
+}
+
+Cam -down- Py : <<USB / DirectShow>>
+Vis -down- Fl
+Fl -down- UI : <<HTTP>> 127.0.0.1
+Pesos .up.> Vis : <<carga>>
+Rec .up.> Fl : <<sirve>>
+Py -[hidden]right- FS
+
+@enduml

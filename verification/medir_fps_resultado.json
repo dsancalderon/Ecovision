@@ -1,0 +1,30 @@
+{
+  "fecha": "2026-11-23 21:52",
+  "equipo": "Intel64 Family 6 Model 126 Stepping 5, GenuineIntel",
+  "modelo": "C:\\Users\\Santi\\EcoVision\\model\\best.pt",
+  "clases": [
+    "botella_reciclable",
+    "carton",
+    "lata_aluminio"
+  ],
+  "A_inferencia_aislada": {
+    "inferencias": 1753,
+    "inf_por_s": 29.2,
+    "ms_media": 34.2,
+    "ms_mediana": 32.4,
+    "ms_p95": 47.5
+  },
+  "B_captura_mas_inferencia": {
+    "camara_ok": true,
+    "resolucion": [
+      1280,
+      720
+    ],
+    "fps_captura": 10.0,
+    "inferencias": 1589,
+    "inf_por_s": 26.5,
+    "ms_media": 37.8,
+    "ms_mediana": 35.5,
+    "ms_p95": 53.5
+  }
+}

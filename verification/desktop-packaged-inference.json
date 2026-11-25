@@ -1,0 +1,15 @@
+{
+  "errors": [],
+  "passed": [
+    "Local provisional model loaded with network disabled",
+    "CPU inference completes on synthetic frame; physical accuracy not tested",
+    "OpenCV encoding and packaged local resources available"
+  ],
+  "frozen": true,
+  "version": "0.2.0",
+  "model_classes": [
+    "botella_reciclable",
+    "carton"
+  ],
+  "model_provisional": true
+}

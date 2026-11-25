@@ -1,0 +1,14 @@
+{
+  "passed": [
+    "menu starts without camera or model",
+    "simulation has no camera stream and shows simulation controls",
+    "all six simulator materials render; PET and cardboard video time advances in card",
+    "return to menu releases UI and resets session",
+    "editing local CSS reloads development UI without packaging",
+    "editing HTML template refreshes rendered content without restarting Python",
+    "external network blocked; zero external requests, failed resources or JavaScript errors"
+  ],
+  "external": [],
+  "errors": [],
+  "failed": []
+}

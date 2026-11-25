@@ -1,0 +1,61 @@
+/* Shared product showcase, active only while a material result is visible. */
+.material-fallback[hidden] { display: none; }
+.material-stage[hidden] { display: none; }
+.result-modal-card.has-material { max-width: 1080px; }
+.has-material .result-modal-grid {
+    grid-template-columns: minmax(220px, 1fr) minmax(190px, 1fr) minmax(180px, .85fr);
+    gap: 1.6rem;
+    padding: 1.8rem;
+}
+.has-material .result-material-details { min-width: 0; }
+.has-material .result-icon-badge { display: none; }
+.material-stage {
+    position: relative;
+    overflow: hidden;
+    align-self: stretch;
+    min-height: 340px;
+    background: transparent;
+}
+.material-media { position: absolute; inset: 0; z-index: 1; }
+.material-fallback { position: absolute; width: 100%; height: 100%; padding: 17px; }
+/* Keep results on screen even when the main kiosk stacks on narrow displays. */
+.result-modal-backdrop { position: fixed; overflow-y: auto; }
+.result-modal-card { max-height: calc(100dvh - 4rem); overflow-y: auto; flex-shrink: 0; }
+@media (max-width: 760px) {
+    .has-material .result-modal-grid { grid-template-columns: minmax(150px, .85fr) minmax(170px, 1fr); gap: 1rem; padding: 1.2rem; }
+    .has-material .result-bin-destination { grid-column: 1 / -1; }
+    .material-stage { min-height: 285px; }
+    .result-modal-footer { flex-wrap: wrap; gap: .8rem; padding: 1rem 1.2rem; }
+    .result-material-title { font-size: 1.5rem; }
+}
+@media (max-width: 440px) {
+    .result-modal-backdrop { padding: .7rem; }
+    .result-modal-card { max-height: calc(100dvh - 1.4rem); }
+    .has-material .result-modal-grid { grid-template-columns: 1fr; }
+    .material-stage { min-height: 270px; }
+    .result-modal-header { font-size: 1rem; padding: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .result-modal-card { animation: none; transform: none; transition: none; }
+}
+
+.material-video, .material-poster {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    /* Blend only the empty margins of the supplied portrait clip into the white card. */
+    mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
+        linear-gradient(to bottom, transparent, #000 10%, #000 92%, transparent);
+    mask-composite: intersect;
+}
+.material-poster { z-index: 1; }
+.material-video { z-index: 2; }
+.material-video[hidden], .material-poster[hidden] { display: none; }
+.has-poster .material-fallback, .has-video .material-fallback { visibility: hidden; }

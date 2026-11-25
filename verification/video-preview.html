@@ -1,0 +1,382 @@
+<!doctype html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoVision — Reciclar empieza con una decisión</title>
+    <meta name="description" content="Sistema interactivo con visión artificial y YOLO para clasificación de residuos en puntos ecológicos.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Outfit:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+    
+    <!-- Favicon / App Icon (Eye Logo) -->
+    <link rel="icon" type="image/png" href="../static/images/icon_ecovision.png">
+    <link rel="shortcut icon" href="../static/images/icon_ecovision.ico">
+    
+    
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/material-media.css">
+</head>
+<body class="ecovision-app">
+
+    <!-- Contenedor Principal / Kiosco (Proporción y diseño idéntico al Mockup) -->
+    <div class="kiosk-frame">
+
+        <!-- ======================================================== -->
+        <!-- CONTENIDO PRINCIPAL: 3 COLUMNAS DEL MOCKUP              -->
+        <!-- ======================================================== -->
+        <div class="mockup-content-grid">
+            
+            <!-- ---------------------------------------------------- -->
+            <!-- COLUMNA IZQUIERDA: LOGO + TIPOGRAFÍA DE IMPACTO       -->
+            <!-- ---------------------------------------------------- -->
+            <section class="left-hero-column">
+                <!-- Logo Oficial EcoVision -->
+                <div class="brand-logo-wrapper">
+                    <img src="../static/images/logo_ecovision.png" alt="EcoVision Logo" class="brand-logo-img">
+                </div>
+
+                <!-- Título Principal del Mockup -->
+                <h1 class="hero-main-title">
+                    Reciclar<br>
+                    empieza con<br>
+                    una decisión
+                </h1>
+
+                <!-- Subtítulo Explicativo -->
+                <p class="hero-main-subtitle">
+                    Identifica tu residuo y depósitalo en el punto ecológico correcto.
+                </p>
+            </section>
+
+            <!-- ---------------------------------------------------- -->
+            <!-- COLUMNA CENTRAL: CÁMARA EN TIEMPO REAL & ESCENARIO    -->
+            <!-- ---------------------------------------------------- -->
+            <section class="center-scanner-stage" id="center-stage-container">
+                
+                <!-- Ilustración de la Cámara Cenital Superior -->
+                <div class="overhead-camera-wrapper">
+                    <img src="../static/images/overhead_camera.png" alt="Cámara Cenital Inteligente" class="overhead-camera-img">
+                    <!-- Haz de Luz y Rayos de Escaneo hacia abajo -->
+                    <div class="camera-light-cone">
+                        <div class="light-ray ray-1"></div>
+                        <div class="light-ray ray-2"></div>
+                        <div class="light-ray ray-3"></div>
+                        <div class="light-particles"></div>
+                    </div>
+                </div>
+
+                <!-- Ilustración de Fondo: Planeta Tierra Ecológico con Hojas -->
+                <div class="globe-backdrop-wrap">
+                    <img src="../static/images/earth_eco_globe_clean.png" alt="Planeta Tierra Ecológico" class="earth-globe-img">
+                </div>
+
+                <!-- VISOR DE CÁMARA EN TIEMPO REAL (En el medio) -->
+                <div class="live-camera-scanner-box" id="scanner-box">
+                    
+                    <!-- Stream de Video de la Cámara Web en Vivo -->
+                    <div class="video-canvas-container">
+                        <img alt="Transmisión en vivo de EcoVision" class="live-video-stream" id="main-video-feed">
+                        
+                        <!-- Fallback / Standby si no hay cámara física conectada -->
+                        <div class="camera-standby-overlay" id="cam-standby" style="display: none;">
+                            <i class="ph-duotone ph-camera-slash"></i>
+                            <span>Cámara en espera</span>
+                            <small>Listo para escanear</small>
+                        </div>
+
+                        <!-- Retículas de Detección en las 4 Esquinas -->
+                        <div class="reticle-target tl"></div>
+                        <div class="reticle-target tr"></div>
+                        <div class="reticle-target bl"></div>
+                        <div class="reticle-target br"></div>
+
+                        <!-- Línea Láser Dinámica de Escaneo IA -->
+                        <div class="laser-scanner-line" id="laser-line"></div>
+
+                        <!-- Overlay de Estado de Escaneo (Estado 2) -->
+                        <div class="scanning-active-hud" id="scanning-hud">
+                            <div class="scan-pill-badge">
+                                <span class="ai-pulse-dot"></span>
+                                <span id="scan-hud-label">ANALIZANDO</span>
+                            </div>
+                            <div class="scan-mini-progress">
+                                <div class="scan-mini-bar" id="scan-progress-bar" style="width: 98.7583%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Badge Indicador En Vivo / FPS -->
+                        <div class="stream-fps-badge">
+                            <span class="live-indicator-dot"></span>
+                            <span id="stream-status-label">RESULTADO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caneca Verde Base con Símbolo de Reciclaje -->
+                <div class="center-bin-wrap">
+                    <img src="../static/images/green_bin_graphic_clean.png" alt="Caneca Verde de Reciclaje" class="green-bin-img">
+                </div>
+
+            </section>
+
+            <!-- ---------------------------------------------------- -->
+            <!-- COLUMNA DERECHA: TARJETA "ASÍ FUNCIONA" (3 PASOS)    -->
+            <!-- ---------------------------------------------------- -->
+            <section class="right-guide-column">
+                <div class="how-it-works-card">
+                    
+                    <!-- Cabecera Verde Oscura -->
+                    <div class="how-card-header">
+                        <h2>Así funciona</h2>
+                    </div>
+
+                    <!-- Lista de 3 Pasos con Líneas Punteadas -->
+                    <div class="how-steps-container">
+                        
+                        <!-- PASO 1: ACERCA -->
+                        <div class="guide-step-row" id="step-row-1" style="opacity: 1;">
+                            <div class="step-circle-badge">1</div>
+                            <div class="step-icon-box">
+                                <svg class="step-vector-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Teléfono / Visor de Escaneo -->
+                                    <rect x="18" y="8" width="28" height="48" rx="6" stroke="#0b3d2c" stroke-width="2.5"></rect>
+                                    <line x1="27" y1="13" x2="37" y2="13" stroke="#0b3d2c" stroke-width="2" stroke-linecap="round"></line>
+                                    <!-- Botella en el centro -->
+                                    <path d="M28 23h8v3h2v17a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V26h2v-3z" stroke="#0b3d2c" stroke-width="1.8" stroke-linejoin="round"></path>
+                                    <!-- Retículas verdes de escaneo -->
+                                    <path d="M22 19h-3v3M42 19h3v3M22 45h-3v-3M42 45h3v-3" stroke="#16a34a" stroke-width="2" stroke-linecap="round"></path>
+                                </svg>
+                            </div>
+                            <div class="step-text-box">
+                                <h3 class="step-title">1. Acerca</h3>
+                                <p class="step-desc">Acerca tu residuo a la cámara.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-dashed-separator"></div>
+
+                        <!-- PASO 2: IDENTIFICA -->
+                        <div class="guide-step-row" id="step-row-2" style="opacity: 1; transform: none;">
+                            <div class="step-circle-badge">2</div>
+                            <div class="step-icon-box">
+                                <svg class="step-vector-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Ojo de Visión Artificial -->
+                                    <path d="M10 32C10 32 20 18 32 18C44 18 54 32 54 32C54 32 44 46 32 46C20 46 10 32 10 32Z" stroke="#0b3d2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <circle cx="32" cy="32" r="6" fill="#0b3d2c"></circle>
+                                    <!-- Rayos de luz en la parte superior -->
+                                    <line x1="32" y1="9" x2="32" y2="13" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"></line>
+                                    <line x1="21" y1="12" x2="24" y2="15" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"></line>
+                                    <line x1="43" y1="12" x2="40" y2="15" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"></line>
+                                </svg>
+                            </div>
+                            <div class="step-text-box">
+                                <h3 class="step-title">2. Identifica</h3>
+                                <p class="step-desc">EcoVision identifica el material y su categoría.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-dashed-separator"></div>
+
+                        <!-- PASO 3: DEPOSITA -->
+                        <div class="guide-step-row" id="step-row-3" style="opacity: 1;">
+                            <div class="step-circle-badge">3</div>
+                            <div class="step-icon-box">
+                                <svg class="step-vector-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Caneca Verde con Símbolo de Reciclaje -->
+                                    <rect x="20" y="19" width="24" height="33" rx="3.5" fill="#15803d"></rect>
+                                    <path d="M16 15h32v5a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2v-5z" fill="#0b3d2c"></path>
+                                    <rect x="26" y="11" width="12" height="5" rx="1.5" fill="#0b3d2c"></rect>
+                                    <!-- Flechas de reciclaje blancas -->
+                                    <path d="M32 27l2.5 4h-1.5v3h-2v-3h-1.5l2.5-4zm-4 8l-.8 4 2.5-1.5 1.2 2-2.8 1.6-2.4-4.4 2.3-1.7zm8 0l2.4 1.7-2.4 4.4-2.8-1.6 1.2-2 2.5 1.5-.9-4z" fill="#ffffff"></path>
+                                </svg>
+                            </div>
+                            <div class="step-text-box">
+                                <h3 class="step-title">3. Deposita</h3>
+                                <p class="step-desc">Depósitalo en el punto ecológico correcto.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- BANNER INFERIOR DEL MOCKUP                               -->
+        <!-- ======================================================== -->
+        <footer class="bottom-action-banner">
+            <div class="banner-left-section">
+                <div class="banner-camera-icon-wrap">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                </div>
+                <span class="banner-primary-text">Acerca tu residuo a la cámara</span>
+            </div>
+
+            <div class="banner-vertical-divider"></div>
+
+            <div class="banner-right-section">
+                <div class="banner-leaf-badge">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="#22c55e" stroke="#0b3d2c" stroke-width="1.5">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                    </svg>
+                </div>
+                <span class="banner-secondary-text">La cámara clasificará el material y te indicará la caneca correcta</span>
+            </div>
+        </footer>
+
+        <!-- ======================================================== -->
+        <!-- MODAL DE RESULTADO / CLASIFICACIÓN (ESTADO 3)            -->
+        <!-- ======================================================== -->
+        <div class="result-modal-backdrop active" id="result-modal">
+            <div class="result-modal-card has-material" id="result-card-element">
+                
+                <!-- Encabezado del Resultado -->
+                <div class="result-modal-header" id="res-header-pill">
+                    <i class="ph-bold ph-check-circle" id="res-header-icon"></i>
+                    <span id="res-header-title">¡RESIDUO RECICLABLE!</span>
+                </div>
+
+                <div class="result-modal-grid">
+                    <div class="material-stage has-poster has-video" id="material-stage" data-material="botella_plastica_pet">
+                        <div class="material-media" id="material-media" role="img" aria-label="Vista de Botella Plástica PET">
+                            <svg class="material-fallback" data-material-fallback="botella_plastica_pet" viewBox="0 0 180 320" aria-hidden="true">
+                                <defs><linearGradient id="pet-glass"><stop stop-color="#7bbfab"></stop><stop offset=".3" stop-color="#e6fff6"></stop><stop offset=".65" stop-color="#b9e4d4"></stop><stop offset="1" stop-color="#63a58e"></stop></linearGradient></defs>
+                                <path d="M71 40h38v30c0 23 35 34 35 66v139q0 20-20 20H56q-20 0-20-20V136c0-32 35-43 35-66Z" fill="url(#pet-glass)" stroke="#82bba6" stroke-width="2"></path>
+                                <rect x="68" y="22" width="44" height="28" rx="7" fill="#0b6045"></rect>
+                                <path d="M40 145h100v78H40z" fill="#0b6045"></path>
+                                <text x="90" y="177" text-anchor="middle" fill="white" font-family="sans-serif" font-size="17" font-weight="bold">EcoVision</text>
+                                <text x="90" y="202" text-anchor="middle" fill="#bbebcc" font-family="sans-serif" font-size="13">PET · 01</text>
+                                <path d="M47 243h86M47 259h86M47 130h86" stroke="#73ad99" fill="none" stroke-width="3"></path>
+                            </svg>
+                            <svg class="material-fallback" data-material-fallback="lata_aluminio" viewBox="0 0 220 320" aria-hidden="true" hidden="">
+                                <defs><linearGradient id="can-metal"><stop stop-color="#819798"></stop><stop offset=".35" stop-color="#f4ffff"></stop><stop offset="1" stop-color="#90a5a5"></stop></linearGradient></defs>
+                                <rect x="48" y="49" width="124" height="235" rx="22" fill="url(#can-metal)"></rect>
+                                <rect x="48" y="77" width="124" height="173" rx="4" fill="#246f60"></rect>
+                                <ellipse cx="110" cy="52" rx="56" ry="15" fill="#d8e3e3" stroke="#809897" stroke-width="4"></ellipse>
+                                <ellipse cx="110" cy="50" rx="12" ry="7" fill="none" stroke="#6d8584" stroke-width="4"></ellipse>
+                                <text x="110" y="160" text-anchor="middle" fill="white" font-family="sans-serif" font-size="19">ALUMINIO</text>
+                                <text x="110" y="190" text-anchor="middle" fill="#bcdfca" font-family="sans-serif" font-size="16">ALU / 41</text>
+                            </svg>
+                            <svg class="material-fallback" data-material-fallback="papel_carton" viewBox="0 0 300 320" aria-hidden="true" hidden="">
+                                <path d="M60 145l85-36 95 34-89 41z" fill="#704d2e"></path>
+                                <path d="M60 145l91 39v104l-91-43z" fill="#c18d55"></path>
+                                <path d="M151 184l89-41v102l-89 43z" fill="#a87442"></path>
+                                <path d="M60 145l-34-39 91-36 28 39zM145 109l33-32 98 33-36 33z" fill="#ddaf73"></path>
+                                <path d="M60 145l91 39-32 30-95-43zM151 184l89-41 36 28-87 41z" fill="#d3a26a"></path>
+                                <text x="105" y="254" text-anchor="middle" fill="#493922" font-family="sans-serif" font-size="12" transform="rotate(24 105 254)">CARTÓN</text>
+                            </svg>
+                            <svg class="material-fallback" data-material-fallback="tetra_pak" viewBox="0 0 220 320" aria-hidden="true" hidden="">
+                                <path d="M48 98l59-49 64 30v196l-47 22-76-23z" fill="#dce9ce"></path>
+                                <path d="M48 98l76 17v182l-76-23z" fill="#246b56"></path>
+                                <path d="M124 115l47-36v196l-47 22z" fill="#92b993"></path>
+                                <path d="M107 49l17 66 47-36z" fill="#f3f5e7"></path>
+                                <text x="86" y="175" text-anchor="middle" fill="white" font-size="14" font-family="sans-serif">TETRA</text>
+                                <text x="86" y="197" text-anchor="middle" fill="white" font-size="14" font-family="sans-serif">PAK</text>
+                            </svg>
+                            <svg class="material-fallback" data-material-fallback="vidrio" viewBox="0 0 180 320" aria-hidden="true" hidden="">
+                                <defs><linearGradient id="glass-green"><stop stop-color="#175c3e"></stop><stop offset=".35" stop-color="#83c49c"></stop><stop offset=".65" stop-color="#3f9368"></stop><stop offset="1" stop-color="#145d3b"></stop></linearGradient></defs>
+                                <path d="M73 28h34v62c0 20 32 28 32 61v128q0 14-14 14H55q-14 0-14-14V151c0-33 32-41 32-61z" fill="url(#glass-green)"></path>
+                                <rect x="69" y="24" width="42" height="12" rx="4" fill="#27754f"></rect>
+                                <path d="M41 160h98v72H41z" fill="#e7dfba"></path>
+                                <text x="90" y="192" text-anchor="middle" fill="#175940" font-size="19" font-family="sans-serif">VIDRIO</text>
+                                <text x="90" y="216" text-anchor="middle" fill="#175940" font-size="12" font-family="sans-serif">ENVASE / GL</text>
+                            </svg>
+                            <svg class="material-fallback" data-material-fallback="no_reciclable" viewBox="0 0 300 320" aria-hidden="true" hidden="">
+                                <path d="M59 127l40-25 15-38 59 29 40 9 27 68-14 66-58 24-75-16-49-53z" fill="#c9bda4" stroke="#ab9c7e" stroke-width="3"></path>
+                                <path d="M59 127l72 26-32-51m32 51l42-60-7 103 60 40m-60-40l-73 48 38-91 109 17" fill="none" stroke="#a5987c" stroke-width="3"></path>
+                                <ellipse cx="182" cy="166" rx="21" ry="11" fill="#8b7657"></ellipse>
+                            </svg>
+                            <img id="material-poster" class="material-poster" alt="" aria-hidden="true" src="../static/videos/botella_plastica_pet-poster.jpg">
+                            <video id="material-video" class="material-video" muted="" playsinline="" loop="" preload="none" aria-hidden="true" disablepictureinpicture="" src="../static/videos/botella_plastica_pet.mp4" autoplay=""></video>
+                        </div>
+                    </div>
+                    
+                    <!-- Columna Izquierda: Información del Residuo -->
+                    <div class="result-material-details">
+                        <div class="result-icon-badge" id="res-material-bubble">
+                            <i class="ph-fill ph-bottle" id="res-material-icon"></i>
+                        </div>
+                        <div class="result-text-block">
+                            <span class="result-category-label" id="res-category-label">PLÁSTICO APROVECHABLE</span>
+                            <h2 class="result-material-title" id="res-material-name">Botella Plástica PET</h2>
+                            <p class="result-material-desc" id="res-material-desc">Envase termoplástico 100% reciclable. Vacía los líquidos y aplástala para optimizar espacio.</p>
+                            <div class="result-conf-chip">
+                                <span>Confianza IA:</span>
+                                <strong id="res-confidence-num">92%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Caneca Asignada -->
+                    <div class="result-bin-destination">
+                        <span class="bin-action-prompt">DEPOSITA EN ESTA CANECA:</span>
+                        
+                        <div class="smart-bin-box bin-blanca" id="res-bin-box">
+                            <div class="bin-glow-circle"></div>
+                            <i class="ph-fill ph-trash-simple bin-svg-icon" id="res-bin-icon"></i>
+                            <h3 class="bin-target-title" id="res-bin-title">CANECA BLANCA</h3>
+                            <p class="bin-target-sub" id="res-bin-subtitle">Residuos aprovechables limpios y secos</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer del Resultado con Puntos y Cuenta Regresiva -->
+                <div class="result-modal-footer">
+                    <div class="result-ecopoints" id="res-ecopoints-text"><i class="ph-fill ph-leaf"></i> <span>+15 EcoPuntos • Ahorro de 0.08 kg CO₂</span></div>
+
+                    <div class="result-timer-box">Vista previa · reproducción continua</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- BARRA DE SIMULACIÓN Y PRUEBAS RÁPIDAS (Flotante)         -->
+    <!-- ======================================================== -->
+    <div class="sim-toolbar-toggle" id="sim-toolbar">
+        
+        <div class="sim-buttons-drawer" id="sim-drawer">
+            <button class="sim-chip" data-class="botella_plastica_pet" title="Probar Botella PET">
+                <i class="ph-fill ph-bottle"></i> Botella PET
+            </button>
+            <button class="sim-chip" data-class="lata_aluminio" title="Probar Lata">
+                <i class="ph-fill ph-brand-alipay"></i> Lata Aluminio
+            </button>
+            <button class="sim-chip" data-class="tetra_pak" title="Probar Tetra Pak">
+                <i class="ph-fill ph-package"></i> Tetra Pak
+            </button>
+            <button class="sim-chip" data-class="papel_carton" title="Probar Papel">
+                <i class="ph-fill ph-newspaper"></i> Papel / Cartón
+            </button>
+            <button class="sim-chip" data-class="vidrio" title="Probar envase de vidrio">
+                <i class="ph-fill ph-bottle"></i> Vidrio
+            </button>
+            <button class="sim-chip sim-chip-reject" data-class="no_reciclable" title="Probar No Reciclable">
+                <i class="ph-fill ph-x-circle"></i> No Reciclable
+            </button>
+            <button class="sim-chip sim-chip-reset" id="btn-force-idle" title="Volver al inicio">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i> Reiniciar
+            </button>
+            <button class="sim-chip sim-chip-audio" id="btn-toggle-audio" title="Activar/Silenciar sonido">
+                <i class="ph-bold ph-speaker-high" id="audio-icon"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    
+    
+
+
+</body></html>
